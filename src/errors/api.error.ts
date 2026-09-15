@@ -1,0 +1,11 @@
+export class ApiError extends Error {
+    constructor(
+        public message: string,
+        public status: number,
+    ) {
+        super(message);
+        this.status = status;
+    }
+}
+
+// video timing 34:41
