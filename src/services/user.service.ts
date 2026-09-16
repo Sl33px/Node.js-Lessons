@@ -26,7 +26,7 @@ class UserService {
         return await userRepository.create(dto);
     }
 
-    public async getById(userId: number): Promise<IUser> {
+    public async getById(userId: string): Promise<IUser> {
         const user = await userRepository.getById(userId);
 
         if (!user) {
@@ -36,13 +36,13 @@ class UserService {
         return user;
     }
 
-    public async putById(userId: number, dto: Partial<IUser>): Promise<IUser> {
+    public async putById(userId: string, dto: IUser): Promise<IUser> {
         await this.getById(userId);
 
         return await userRepository.putById(userId, dto);
     }
 
-    public async deleteById(userId: number): Promise<void> {
+    public async deleteById(userId: string): Promise<void> {
         await this.getById(userId);
 
         await userRepository.deleteById(userId);
