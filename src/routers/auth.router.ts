@@ -33,4 +33,11 @@ router.post(
     authController.logoutAll,
 );
 
+router.post("/forgot-password", authController.forgotPasswordSendGmail);
+router.put(
+    "/forgot-password",
+    authMiddleware.checkActionToken,
+    authController.forgotPasswordSet,
+);
+
 export const authRouter = router;
