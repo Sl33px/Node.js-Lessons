@@ -7,5 +7,3 @@ export class ApiError extends Error {
         this.status = status;
     }
 }
-
-// video timing 34:41

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+import { ITokenPayload } from "../interfaces/IToken";
 import { IUser } from "../interfaces/user.interface";
 import { userService } from "../services/user.service";
 
@@ -13,41 +14,43 @@ class UserController {
         }
     }
 
-    public async create(req: Request, res: Response, next: NextFunction) {
-        try {
-            const dto = req.body as IUser;
-            const result = await userService.create(dto);
-            res.status(201).json(result);
-        } catch (e) {
-            next(e);
-        }
-    }
-
     public async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const userId = req.params.userId;
-            const result = await userService.getById(userId);
+            if (typeof userId === "string") {
+                const result = await userService.getById(userId);
+                res.json(result);
+            }
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async getMe(req: Request, res: Response, next: NextFunction) {
+        try {
+            const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+            const result = await userService.getMe(jwtPayload);
             res.json(result);
         } catch (e) {
             next(e);
         }
     }
 
-    public async putById(req: Request, res: Response, next: NextFunction) {
+    public async putMe(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.params.userId;
+            const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
             const dto = req.body as IUser;
-            const result = await userService.putById(userId, dto);
+            const result = await userService.putMe(jwtPayload, dto);
             res.json(result);
         } catch (e) {
             next(e);
         }
     }
 
-    public async deleteById(req: Request, res: Response, next: NextFunction) {
+    public async deleteMe(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.params.userId;
-            await userService.deleteById(userId);
+            const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+            await userService.deleteMe(jwtPayload);
             res.sendStatus(204);
         } catch (e) {
             next(e);
