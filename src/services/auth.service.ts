@@ -1,8 +1,10 @@
+import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiError } from "../errors/api.error";
 import { ITokenPair, ITokenPayload } from "../interfaces/IToken";
 import { ISignIn, IUser } from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
+import { emailService } from "./email.service";
 import { passwordService } from "./password.service";
 import { tokenService } from "./token.service";
 
@@ -33,6 +35,12 @@ class AuthService {
             role: user.role,
         });
         await tokenRepository.create({ ...tokens, _userId: user._id });
+
+        await emailService.sendMail(
+            "shaposhnikovdima5580@gmail.com",
+            EmailTypeEnum.WELCOME,
+            { name: user.name },
+        );
 
         return { user, tokens };
     }
@@ -65,7 +73,6 @@ class AuthService {
     // TODO add refresh token service
     public async refreshToken(
         jwtPayload: ITokenPayload,
-        oldRefreshToken: string,
     ): Promise<ITokenPair> {
         await tokenRepository.deleteOneByParams({ _userId: jwtPayload.userId });
 
