@@ -70,9 +70,9 @@ class AuthService {
         return { user, tokens };
     }
 
-    // TODO add refresh token service
     public async refreshToken(
         jwtPayload: ITokenPayload,
+        refreshToken: string,
     ): Promise<ITokenPair> {
         await tokenRepository.deleteOneByParams({ _userId: jwtPayload.userId });
 
@@ -83,6 +83,31 @@ class AuthService {
 
         await tokenRepository.create({ ...tokens, _userId: jwtPayload.userId });
         return tokens;
+    }
+
+    public async logout(
+        jwtPayload: ITokenPayload,
+        accessToken: string,
+    ): Promise<void> {
+        await tokenRepository.deleteOneByParams({
+            _userId: jwtPayload.userId,
+            accessToken,
+        });
+    }
+
+    public async logoutAll(jwtPayload: ITokenPayload): Promise<void> {
+        const user = await userRepository.getById(jwtPayload.userId);
+        if (!user) {
+            throw new ApiError("User not found", 404);
+        }
+
+        await tokenRepository.deleteManyByParams({
+            _userId: jwtPayload.userId,
+        });
+
+        await emailService.sendMail(user.email, EmailTypeEnum.OLD_VISIT, {
+            name: user.name,
+        });
     }
 }
 

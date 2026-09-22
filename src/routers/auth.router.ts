@@ -19,11 +19,18 @@ router.post(
     authController.signIn,
 );
 
-// TODO add refresh token route
 router.post(
     "/refresh",
     authMiddleware.checkRefreshToken,
     authController.refreshToken,
+);
+
+router.post("/logout", authMiddleware.checkAccessToken, authController.logout);
+
+router.post(
+    "/logout-all",
+    authMiddleware.checkAccessToken,
+    authController.logoutAll,
 );
 
 export const authRouter = router;

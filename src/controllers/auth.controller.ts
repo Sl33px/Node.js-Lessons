@@ -25,7 +25,6 @@ class AuthController {
         }
     }
 
-    // TODO add refresh token controller
     public async refreshToken(req: Request, res: Response, next: NextFunction) {
         try {
             const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
@@ -36,6 +35,29 @@ class AuthController {
                 refreshToken,
             );
             res.json(result);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async logout(req: Request, res: Response, next: NextFunction) {
+        try {
+            const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+            const accessToken = req.res.locals.accessToken as string;
+
+            await authService.logout(jwtPayload, accessToken);
+            res.sendStatus(204);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async logoutAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+
+            await authService.logoutAll(jwtPayload);
+            res.sendStatus(204);
         } catch (e) {
             next(e);
         }

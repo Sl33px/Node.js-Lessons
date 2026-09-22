@@ -28,6 +28,7 @@ class AuthMiddleware {
             }
 
             req.res.locals.jwtPayload = payload;
+            req.res.locals.accessToken = accessToken;
             next();
         } catch (e) {
             next(e);
