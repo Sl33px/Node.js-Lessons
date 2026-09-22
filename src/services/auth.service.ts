@@ -1,5 +1,5 @@
 import { ApiError } from "../errors/api.error";
-import { ITokenPair } from "../interfaces/IToken";
+import { ITokenPair, ITokenPayload } from "../interfaces/IToken";
 import { ISignIn, IUser } from "../interfaces/user.interface";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -63,6 +63,20 @@ class AuthService {
     }
 
     // TODO add refresh token service
+    public async refreshToken(
+        jwtPayload: ITokenPayload,
+        oldRefreshToken: string,
+    ): Promise<ITokenPair> {
+        await tokenRepository.deleteOneByParams({ _userId: jwtPayload.userId });
+
+        const tokens = tokenService.generateTokens({
+            userId: jwtPayload.userId,
+            role: jwtPayload.role,
+        });
+
+        await tokenRepository.create({ ...tokens, _userId: jwtPayload.userId });
+        return tokens;
+    }
 }
 
 export const authService = new AuthService();
