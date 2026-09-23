@@ -37,14 +37,27 @@ class AuthService {
 
         const password = await passwordService.hashPassword(dto.password);
         const user = await userRepository.create({ ...dto, password });
+
         const tokens = tokenService.generateTokens({
             userId: user._id,
             role: user.role,
         });
         await tokenRepository.create({ ...tokens, _userId: user._id });
 
+        const actionToken = tokenService.generateActionTokens(
+            { userId: user._id, role: user.role },
+            ActionTokenTypeEnum.VERIFY_EMAIL,
+        );
+
+        await actionTokenRepository.create({
+            type: ActionTokenTypeEnum.VERIFY_EMAIL,
+            _userId: user._id,
+            token: actionToken,
+        });
+
         await emailService.sendMail(user.email, EmailTypeEnum.WELCOME, {
             name: user.name,
+            actionToken,
         });
 
         return { user, tokens };
@@ -158,6 +171,14 @@ class AuthService {
 
         await tokenRepository.deleteManyByParams({
             _userId: jwtPayload.userId,
+        });
+    }
+
+    public async verifyUser(jwtPayload: ITokenPayload): Promise<void> {
+        await userRepository.putById(jwtPayload.userId, { isVerified: true });
+        await actionTokenRepository.deleteManyByParams({
+            _userId: jwtPayload.userId,
+            type: ActionTokenTypeEnum.VERIFY_EMAIL,
         });
     }
 }

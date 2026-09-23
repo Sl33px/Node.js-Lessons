@@ -40,4 +40,10 @@ router.put(
     authController.forgotPasswordSet,
 );
 
+router.post(
+    "/verify",
+    authMiddleware.checkVerifyEmailToken,
+    authController.verifyUser,
+);
+
 export const authRouter = router;

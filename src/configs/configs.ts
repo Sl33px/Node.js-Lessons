@@ -20,4 +20,9 @@ export const configs = {
 
     SMTP_EMAIL: process.env.SMTP_EMAIL as string,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD as string,
+
+    ACTION_VERIFY_EMAIL_SECRET: process.env
+        .ACTION_VERIFY_EMAIL_SECRET as string,
+    ACTION_VERIFY_EMAIL_EXPIRATION: process.env
+        .ACTION_VERIFY_EMAIL_EXPIRATION as string,
 };
