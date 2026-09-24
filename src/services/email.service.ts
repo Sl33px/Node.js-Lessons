@@ -49,10 +49,19 @@ class EmailService {
         type: T,
         context: EmailTypeToPayload[T],
     ): Promise<void> {
-        const { subject, template } = emailConstants[type];
+        try {
+            const { subject, template } = emailConstants[type];
 
-        const options = { to, subject, template, context };
-        await this.transporter.sendMail(options);
+            const options = {
+                to,
+                subject,
+                template,
+                context: { ...context, frontUrl: configs.FRONT_URL },
+            };
+            await this.transporter.sendMail(options);
+        } catch (e) {
+            console.error("Email sending error:", e);
+        }
     }
 }
 

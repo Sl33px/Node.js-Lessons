@@ -21,6 +21,8 @@ export const configs = {
     SMTP_EMAIL: process.env.SMTP_EMAIL as string,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD as string,
 
+    FRONT_URL: process.env.FRONT_URL || "http://localhost:3000",
+
     ACTION_VERIFY_EMAIL_SECRET: process.env
         .ACTION_VERIFY_EMAIL_SECRET as string,
     ACTION_VERIFY_EMAIL_EXPIRATION: process.env

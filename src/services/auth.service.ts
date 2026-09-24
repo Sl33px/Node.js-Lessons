@@ -20,6 +20,10 @@ class AuthService {
     public async signUp(
         dto: Partial<IUser>,
     ): Promise<{ user: IUser; tokens: ITokenPair }> {
+        const existingUser = await userRepository.getByEmail(dto.email);
+        if (existingUser) {
+            throw new ApiError("Email already exists", 409);
+        }
         if (!dto.name || dto.name.length < 3) {
             throw new ApiError(
                 "Name is required and sould be at least 3 characters long",
@@ -196,6 +200,15 @@ class AuthService {
     }
 
     public async verifyUser(jwtPayload: ITokenPayload): Promise<void> {
+        const user = await userRepository.getById(jwtPayload.userId);
+        if (!user) {
+            throw new ApiError("User not found", 404);
+        }
+
+        if (user.isVerified) {
+            throw new ApiError("User already verified", 400);
+        }
+
         await userRepository.putById(jwtPayload.userId, { isVerified: true });
         await actionTokenRepository.deleteManyByParams({
             _userId: jwtPayload.userId,

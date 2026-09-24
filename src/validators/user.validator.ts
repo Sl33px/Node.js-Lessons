@@ -18,11 +18,7 @@ export const updateUserValidator = Joi.object({
     name: Joi.string().min(3).max(20).optional(),
     age: Joi.number().min(0).max(100).optional(),
     email: Joi.string().email().optional(),
-    password: Joi.string().min(6).max(20).optional(),
     phone: Joi.string().optional(),
-    role: Joi.string()
-        .valid(...Object.values(RoleEnum))
-        .optional(),
 });
 
 export const userQueryValidator = Joi.object({
