@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 import { ITokenPayload } from "../interfaces/IToken";
 import {
+    IChangePassword,
     IResetPasswordSend,
     IResetPasswordSet,
     ISignIn,
@@ -91,6 +92,22 @@ class AuthController {
             const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
             const dto = req.body as IResetPasswordSet;
             await authService.forgotPasswordSet(dto, jwtPayload);
+            res.sendStatus(204);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    public async changePassword(
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) {
+        try {
+            const jwtPayload = req.res.locals.jwtPayload as ITokenPayload;
+            const dto = req.body as IChangePassword;
+
+            await authService.changePassword(jwtPayload, dto);
             res.sendStatus(204);
         } catch (e) {
             next(e);

@@ -3,7 +3,10 @@ import { Router } from "express";
 import { authController } from "../controllers/auth.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { commonMiddleware } from "../middlewares/common.middleware";
-import { userValidator } from "../validators/user.validator";
+import {
+    changePasswordValidator,
+    userValidator,
+} from "../validators/user.validator";
 
 const router = Router();
 
@@ -38,6 +41,13 @@ router.put(
     "/forgot-password",
     authMiddleware.checkActionToken,
     authController.forgotPasswordSet,
+);
+
+router.post(
+    "/change-password",
+    authMiddleware.checkAccessToken,
+    commonMiddleware.isBodyValid(changePasswordValidator),
+    authController.changePassword,
 );
 
 router.post(

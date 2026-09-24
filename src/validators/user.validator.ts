@@ -42,3 +42,8 @@ export const userIdParamValidator = Joi.object({
         .required()
         .messages({ "any.invalid": "Invalid userId format" }),
 });
+
+export const changePasswordValidator = Joi.object({
+    oldPassword: Joi.string().required(),
+    password: Joi.string().required(),
+});
